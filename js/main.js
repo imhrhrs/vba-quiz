@@ -76,48 +76,43 @@ document.addEventListener('DOMContentLoaded', () => {
 async function playFireworkAnimation(canvas, ctx) {
   return new Promise((resolve) => {
     const centerX = Math.random() * canvas.width;
-    const centerY = Math.random() * canvas.height;
+    const centerY = Math.random() * canvas.height / 2; // 上半分に表示
 
     let particles = [];
-    const colors = ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'];
 
-    for (let i = 0; i < 100; i++) {
+    const count = 100;
+    for (let i = 0; i < count; i++) {
       particles.push({
         x: centerX,
         y: centerY,
-        vx: (Math.random() - 0.5) * 5,
-        vy: (Math.random() - 0.5) * 5,
+        angle: Math.random() * 2 * Math.PI,
+        speed: Math.random() * 5 + 2,
+        radius: 2,
         alpha: 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
+        color: `hsl(${Math.random() * 360}, 100%, 60%)`
       });
-    }
-
-    function hexToRgb(hex) {
-      hex = hex.replace('#', '');
-      const bigint = parseInt(hex, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      return `${r},${g},${b}`;
     }
 
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // ← 残像なし
+
+      particles = particles.filter((p) => p.alpha > 0.01);
 
       particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= 0.02;
+        // 位置更新
+        p.x += Math.cos(p.angle) * p.speed;
+        p.y += Math.sin(p.angle) * p.speed;
+        p.alpha -= 0.015;
 
-        if (p.alpha > 0) {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${hexToRgb(p.color)},${p.alpha})`;
-          ctx.fill();
-        }
+        // 描画
+        ctx.beginPath();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
       });
 
-      particles = particles.filter((p) => p.alpha > 0);
+      ctx.globalAlpha = 1;
 
       if (particles.length > 0) {
         requestAnimationFrame(animate);
@@ -135,11 +130,16 @@ async function showFireworks() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
+  // キャンバスサイズ調整
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
   for (let i = 0; i < 10; i++) {
     await playFireworkAnimation(canvas, ctx);
-    // 少し待つ
     await new Promise((r) => setTimeout(r, 300));
   }
 }
 
 export { showFireworks };
+
+
