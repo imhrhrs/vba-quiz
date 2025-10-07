@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>〇×クイズ</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="quiz-container">
+    <!-- 出題設定 -->
+    <div class="quiz-settings">
+      <label for="question-count">出題数：</label>
+      <input type="number" id="question-count" min="1" placeholder="例: 10">
+
+      
+      <label><input type="checkbox" id="randomize-questions" checked> ランダム出題する</label>
+      
+    </div>
+
+    <!-- クイズ本体 -->
+    <h2 id="genre"></h2>
+    <p id="question"></p>
+
+    <div class="button-container">
+      <button id="true-btn">〇</button>
+      <button id="false-btn">×</button>
+    </div>
+
+    <div id="feedback"></div>
+    <p id="explanation"></p>
+    <p id="law-reference"></p>
+
+    <button id="next-btn" style="display:none;">次の問題へ</button>
+  </div>
+
+  <!-- CSV読み込み -->
+  <div class="import-section">
+    <h3>CSV問題集を読み込む</h3>
+    <input type="file" id="csv-import" accept=".csv" />
+  </div>
+
+  <!-- ツールエリア -->
+  <div class="tools">
+    <button id="export-csv">履歴をCSV出力</button>
+    <button id="show-graph">成績グラフを表示</button>
+  </div>
+
+  <!-- グラフ描画エリア -->
+  <canvas id="result-chart" width="400" height="300"></canvas>
+
+  <!-- 花火表示エリア -->
+  <canvas id="fireworks-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;display:none;"></canvas>
+
+
+  <!-- JavaScript -->
+  <script type="module" src="./js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
+</body>
+</html>
